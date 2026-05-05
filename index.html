@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario — IES Lacimurga</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<!-- ── Sidebar overlay (mobile) ──────────────────────────── -->
+<div class="sidebar-overlay" id="overlay"></div>
+
+<div class="app-wrapper">
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Logo" class="logo-symbol-img" />
+      <img src="textlogo.png" alt="IES Lacimurga" class="logo-text-img" />
+    </div>
+
+    <div class="sidebar-label">Categorías</div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <!-- generado por JS -->
+    </nav>
+  </aside>
+
+  <!-- ── MAIN ────────────────────────────────────────────── -->
+  <div class="main-area">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
+
+      <div class="search-wrap">
+        <span class="icon-search">🔍</span>
+        <input class="search-input" id="searchInput" type="search" placeholder="Buscar material..." />
+      </div>
+
+      <button class="btn-export" id="btnExport">
+        <span class="icon">⊕</span>
+        <span>Exportar</span>
+      </button>
+    </header>
+
+    <!-- ── HOME PAGE ─────────────────────────────────────── -->
+    <div class="page-content home-page" id="homePage">
+
+      <div class="page-heading">
+        <h1 id="pageTitle">Todos los materiales</h1>
+        <p id="pageSubtitle">Inventario general del almacén del instituto</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card">
+          <div class="stat-label">Total materiales</div>
+          <div class="stat-value" id="statMaterials">—</div>
+          <div class="stat-desc">referencias registradas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Unidades totales</div>
+          <div class="stat-value" id="statUnits">—</div>
+          <div class="stat-desc">unidades en almacén</div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="inventory-card">
+        <div class="inventory-header">
+          <span class="inventory-title">Inventario</span>
+          <button class="btn-sort" id="btnSort">Ordenar por… ▾</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Material</th>
+                <th>Categoría</th>
+                <th>Cantidad</th>
+                <th>Talla</th>
+                <th>Estantería</th>
+                <th>Notas</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody">
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+
+    </div><!-- /home-page -->
+
+    <!-- ── DETAIL PAGE ────────────────────────────────────── -->
+    <div class="page-content detail-page" id="detailPage">
+      <button class="btn-back" id="btnBack">← Volver al inventario</button>
+
+      <div class="detail-card" id="detailCard">
+        <!-- generado por JS -->
+      </div>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /app-wrapper -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════ -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
