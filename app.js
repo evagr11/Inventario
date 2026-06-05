@@ -51,16 +51,25 @@ function highlight(text, q) {
 }
 
 // ── Filtrado / datos visibles ─────────────────────────────────
+// ── Helpers para búsqueda sin tildes ─────────────────────────
+function normalizeText(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+// ── Filtrado / datos visibles ─────────────────────────────────
 function filteredData() {
   let data = [...MATERIALES];
   if (state.activeCategory) data = data.filter(m => m.categoria === state.activeCategory);
   if (state.activeSubcat)   data = data.filter(m => m.subcategoria === state.activeSubcat);
   if (state.search) {
-    const q = state.search.toLowerCase();
+    const q = normalizeText(state.search);
     data = data.filter(m =>
-      m.nombre.toLowerCase().includes(q) ||
-      (m.codigo && m.codigo.includes(q)) ||
-      (m.descripcion && m.descripcion.toLowerCase().includes(q))
+      normalizeText(m.nombre).includes(q) ||
+      (m.codigo && normalizeText(m.codigo).includes(q)) ||
+      (m.descripcion && normalizeText(m.descripcion).includes(q))
     );
   }
   if (state.sortKey) {
@@ -93,6 +102,8 @@ function renderSidebar() {
   allItem.addEventListener('click', () => {
     state.activeCategory = null;
     state.activeSubcat = null;
+    state.search = '';
+    document.getElementById('searchInput').value = '';
     state.page = 1;
     showHome();
     renderSidebar();
@@ -113,21 +124,62 @@ function renderSidebar() {
       ${cat.nombre}
       ${hasSubs ? `<span class="chevron">▶</span>` : ''}
     `;
-    item.addEventListener('click', () => {
-      state.activeCategory = cat.id;
-      state.activeSubcat = null;
-      state.page = 1;
-      showHome();
-      renderSidebar();
-      renderTable();
-      updatePageHeading();
-      closeSidebar();
+    
+    item.addEventListener('click', (e) => {
+      const isMobile = window.innerWidth <= 768;
+      const sidebarOpen = document.getElementById('sidebar').classList.contains('open');
+      
+      if (hasSubs && isMobile && sidebarOpen) {
+        if (state.activeCategory === cat.id) {
+          state.activeCategory = null;
+          state.activeSubcat = null;
+        } else {
+          state.activeCategory = cat.id;
+          state.activeSubcat = null;
+        }
+        state.page = 1;
+        renderSidebar();
+      } else {
+        state.activeCategory = cat.id;
+        state.activeSubcat = null;
+        state.search = '';
+        document.getElementById('searchInput').value = '';
+        state.page = 1;
+        showHome();
+        renderSidebar();
+        renderTable();
+        updatePageHeading();
+        closeSidebar();
+      }
     });
+    
     nav.appendChild(item);
 
     if (hasSubs) {
       const sub = document.createElement('div');
       sub.className = 'nav-sub' + (isOpen ? ' open' : '');
+      
+      // Subcategoría "Todos"
+      const todosItem = document.createElement('div');
+      todosItem.className = 'nav-sub-item' + (state.activeSubcat === null && state.activeCategory === cat.id ? ' active' : '');
+      todosItem.textContent = '— Todos —';
+      todosItem.style.fontWeight = '600';
+      todosItem.style.fontStyle = 'italic';
+      todosItem.addEventListener('click', e => {
+        e.stopPropagation();
+        state.activeCategory = cat.id;
+        state.activeSubcat = null;
+        state.search = '';
+        document.getElementById('searchInput').value = '';
+        state.page = 1;
+        showHome();
+        renderSidebar();
+        renderTable();
+        updatePageHeading();
+        closeSidebar();
+      });
+      sub.appendChild(todosItem);
+      
       cat.subcategorias.forEach(sc => {
         const si = document.createElement('div');
         si.className = 'nav-sub-item' + (state.activeSubcat === sc ? ' active' : '');
@@ -136,6 +188,8 @@ function renderSidebar() {
           e.stopPropagation();
           state.activeCategory = cat.id;
           state.activeSubcat = sc;
+          state.search = '';
+          document.getElementById('searchInput').value = '';
           state.page = 1;
           showHome();
           renderSidebar();
@@ -341,6 +395,12 @@ document.getElementById('searchInput').addEventListener('input', e => {
     state.page = 1;
     state.activeCategory = null;
     state.activeSubcat = null;
+    
+    // Si estamos en detalle, volver al listado
+    if (document.getElementById('detailPage').classList.contains('visible')) {
+      showHome(true); // true = viene de búsqueda
+    }
+    
     renderSidebar();
     updatePageHeading();
     renderTable();
@@ -414,11 +474,15 @@ showDetail = function(id) {
 
 // Modificar showHome para limpiar el hash
 const originalShowHome = showHome;
-showHome = function() {
-  if (location.hash.startsWith('#detalle-')) {
+showHome = function(fromSearch = false) {
+  if (location.hash.startsWith('#detalle-') && !fromSearch) {
     history.back();
   } else {
     originalShowHome();
+    // Limpiar hash si viene de búsqueda
+    if (fromSearch) {
+      history.replaceState(null, '', ' ');
+    }
   }
 };
 

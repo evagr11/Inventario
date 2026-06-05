@@ -235,12 +235,17 @@ img { max-width: 100%; display: block; }
 .search-input::placeholder { color: var(--text-light); }
 
 .btn-export {
-  display: flex; align-items: center; gap: 7px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 7px;
   padding: 8px 16px;
   border-radius: var(--radius);
   border: 1.5px solid var(--border);
   background: #fff;
-  font-size: 13px; font-weight: 600; color: var(--text);
+  font-size: 13px; 
+  font-weight: 600; 
+  color: var(--text);
   transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
   white-space: nowrap;
 }
@@ -541,7 +546,9 @@ mark { background: #fef08a; border-radius: 2px; padding: 0 2px; }
   .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .stat-value { font-size: 22px; }
 
-  .btn-export span { display: none; }
+  .btn-export span:last-child { display: none; }
+  .btn-export { padding: 8px; }
+  .btn-export .icon { font-size: 18px; }
 
   thead th:nth-child(4),
   tbody td:nth-child(4),
